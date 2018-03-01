@@ -91,7 +91,7 @@
 					console.log("onStreamDimensionsAvailable");
 
 					if (webcam.videoWidth === 0) {
-						setTimeout(onStreamDimensionsAvailable, 1000);
+						setTimeout(onStreamDimensionsAvailable, 100);
 					} else {
 
 						// Resize the canvas to match the webcam video size.
@@ -125,7 +125,7 @@
 				}
 			}
 
-			window.navigator.mediaDevices.getUserMedia({audio: true, video: {width: 640, height: 480, frameRate: 30}})
+			window.navigator.mediaDevices.getUserMedia({audio: false, video: {width: 640, height: 480, frameRate: 30}})
 				.then(onStreamFetched).catch(function (err) { alert("No camera available. "+err); });
 		}
 
