@@ -12,9 +12,8 @@ var That;
 const APP = new PIXI.Application(640, 480);
 document.body.appendChild(APP.view);
 var faceTexture;
-var faceSprite;
-var faceContainerArr = [];
-var faceMaskArr=[];
+var facePlaneArr = [];
+var faceMaskArr = [];
 
 
 export default class Scene {
@@ -41,39 +40,35 @@ export default class Scene {
 
 		faceTexture = PIXI.Texture.fromCanvas(That.face.faceImage);
 		// faceTexture = PIXI.Texture.fromVideo(That.face.webcam);
-		faceSprite = new PIXI.Sprite(faceTexture);
-		faceSprite.width = APP.screen.width;
-		faceSprite.height = APP.screen.height;
-		APP.stage.addChild(faceSprite);
 
+		var faceNum = 5;
 
-		for (var i = 0; i < 3; i++) {
+		for (var i = 0; i < faceNum; i++) {
+
+			var c = 1 - (0.18 * i);
 
 			var facePlane = new PIXI.Sprite(faceTexture);
 			facePlane.width = APP.screen.width;
 			facePlane.height = APP.screen.height;
 			facePlane.anchor.set(0.5);
+			facePlane.x = APP.screen.width / 2;
+			facePlane.y = APP.screen.height / 2;
+			facePlane.scale.set(c, c);
+			facePlaneArr.push(facePlane);
+			APP.stage.addChild(facePlane);
 
-			var faceMask = new PIXI.Graphics();
-			faceMask.x = -APP.screen.width/2;
-			faceMask.y = -APP.screen.height/2;
-			facePlane.mask = faceMask;
+			if (i < faceNum - 1) {
+				var faceMask = new PIXI.Graphics();
+				faceMask.scale.set(c, c);
+				faceMask.x = APP.screen.width * (1 - c) / 2;
+				faceMask.y = APP.screen.height * (1 - c) / 2;
+				faceMaskArr.push(faceMask);
+				APP.stage.addChild(faceMask);
+			}
 
-
-			var faceContainer = new PIXI.Container();
-			faceContainer.addChild(facePlane);
-			faceContainer.addChild(faceMask);
-			faceMaskArr.push(faceMask);
-
-			faceContainer.x = APP.screen.width/2;
-			faceContainer.y = APP.screen.height/2;
-
-			var c = 1 - (0.2 * i);
-			faceContainer.scale.set(c,c);
-
-            APP.stage.addChild(faceContainer);
-			faceContainerArr.push(faceContainer);
-
+			if (i > 0) {
+				facePlaneArr[i].mask = faceMaskArr[i - 1];
+			}
 
 		}
 
@@ -94,7 +89,7 @@ export default class Scene {
 			var face = faces[0];
 			for (var i = 0; i < faceMaskArr.length; i++) {
 				faceMaskArr[i].clear();
-				faceMaskArr[i].beginFill(0xffffff);
+				faceMaskArr[i].beginFill(0xffffff, 0.3);
 				faceMaskArr[i].moveTo(face.vertices[0], face.vertices[1]);
 
 				for (var k = 2; k < 17 * 2; k += 2) {
