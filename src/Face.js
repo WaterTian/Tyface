@@ -1,6 +1,9 @@
 const isIOS11 = (window.navigator.userAgent.indexOf("iPad") > 0 || window.navigator.userAgent.indexOf("iPhone") > 0) && window.navigator.userAgent.indexOf("OS 11_") > 0;
 
+const Loader = require('./Loader.js').default;
 var That;
+
+var brfv4BaseURL = "js/libs/brf_wasm/";
 
 export default class Face {
 	constructor(onComplete) {
@@ -19,7 +22,12 @@ export default class Face {
 		this.brfManager = null;
 		this.resolution = null;
 
-		this.initCamera();
+
+
+		var loader = new Loader();
+		loader.preload([
+			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.js", // BRFv4 SDK
+		], this.initCamera);
 	}
 
 
@@ -38,18 +46,18 @@ export default class Face {
 				support = false;
 			}
 		}
-		console.log(support);
-		var script = document.createElement("script");
-		script.setAttribute("type", "text/javascript");
-		script.setAttribute("async", true);
-		script.setAttribute("src", "js/libs/brf_wasm/BRFv4_JS_TK190218_v4.0.5_trial.js");
-		document.getElementsByTagName("head")[0].appendChild(script);
+
+		That.brfv4 = {
+			locateFile: function(fileName) {
+				return brfv4BaseURL + fileName;
+			}
+		};
+		initializeBRF(That.brfv4);
 
 
 		//add
-		document.body.appendChild(this.webcam);
-		document.body.appendChild(this.faceImage);
-
+		document.body.appendChild(That.webcam);
+		document.body.appendChild(That.faceImage);
 
 
 		var mediaDev = window.navigator.mediaDevices.getUserMedia({
@@ -60,7 +68,7 @@ export default class Face {
 				frameRate: 30
 			}
 		});
-		mediaDev.then(this.onStreamFetched);
+		mediaDev.then(That.onStreamFetched);
 		mediaDev.catch(function(err) {
 			alert("Camera Erro. " + err);
 		});
@@ -79,6 +87,7 @@ export default class Face {
 			} else {
 
 				if (isIOS11) {
+					console.log('webcam pause for iOS 11');
 					That.webcam.pause();
 					That.webcam.srcObject.getTracks().forEach(function(track) {
 						track.stop();
@@ -98,15 +107,6 @@ export default class Face {
 	waitForSDK() {
 		console.log("waitForSDK");
 
-		if (That.brfv4 === null) {
-			That.brfv4 = {
-				locateFile: function(fileName) {
-					return "js/libs/brf_wasm/" + fileName;
-				}
-			};
-			initializeBRF(That.brfv4);
-		}
-
 		if (That.brfv4.sdkReady) {
 			That.initSDK();
 		} else {
@@ -120,7 +120,16 @@ export default class Face {
 		That.brfManager = new That.brfv4.BRFManager();
 		That.brfManager.init(That.resolution, That.resolution, "com.tastenkunst.brfv4.js.examples.minimal.webcam");
 
-		That.onComplete();
+
+		if (isIOS11) {
+			// Start the camera stream again on iOS.
+			setTimeout(function() {
+				console.log('delayed camera restart for iOS 11');
+				That.initCamera()
+			}, 2000)
+		} else {
+			That.onComplete();
+		}
 
 	}
 

@@ -3,8 +3,6 @@ const TweenMax = require('gsap');
 const Stats = require('stats.js');
 const VConsole = require('vconsole');
 
-const isMobile = require('./libs/isMobile.min.js');
-const isIOS11 = (window.navigator.userAgent.indexOf("iPad") > 0 || window.navigator.userAgent.indexOf("iPhone") > 0) && window.navigator.userAgent.indexOf("OS 11_") > 0;
 
 const Face = require('./Face.js').default;
 

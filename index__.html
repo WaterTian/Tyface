@@ -104,6 +104,7 @@
 						// Otherwise the stream will just stop and won't update anymore.
 
 						if(isIOS11) {
+							console.log('webcam pause for iOS 11');
 							webcam.pause();
 							webcam.srcObject.getTracks().forEach(function(track) {
 								track.stop();

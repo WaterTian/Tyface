@@ -17,6 +17,7 @@
     "gsap": "^1.20.3",
     "pixi-sound": "^2.0.1",
     "pixi.js": "^4.7.0",
+    "preloadjs": "^1.0.1",
     "stats.js": "^0.17.0",
     "vconsole": "^3.1.0"
   },
