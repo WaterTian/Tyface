@@ -30,13 +30,6 @@ export default class Face {
 
 		], this.initCamera);
 
-
-		That.brfv4 = {
-			locateFile: function(fileName) {
-				return brfv4BaseURL + fileName;
-			}
-		};
-
 	}
 
 
@@ -57,6 +50,12 @@ export default class Face {
 		}
 
 
+
+		That.brfv4 = {
+			locateFile: function(fileName) {
+				return brfv4BaseURL + fileName;
+			}
+		};
 		initializeBRF(That.brfv4);
 
 		//add
