@@ -27,9 +27,9 @@ export default class Face {
 		var loader = new Loader();
 		loader.preload([
 			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.js", // BRFv4 SDK
+			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.wasm", // BRFv4 SDK
 
 			"js/utils/BRFv4PointUtils.js", // some calculation helpers
-
 			"js/utils/BRFv4SetupChooser.js", // gui: choose either webcam or picture
 			"js/utils/BRFv4ExampleChooser.js", // gui: choose an example
 			"js/utils/BRFv4DownloadChooser.js" // gui: choose which package to download
