@@ -78,12 +78,12 @@ export default class Face {
 				setTimeout(onStreamDimensionsAvailable, 100);
 			} else {
 
-				// if (isIOS11) {
-				// 	webcam.pause();
-				// 	webcam.srcObject.getTracks().forEach(function(track) {
-				// 		track.stop();
-				// 	});
-				// }
+				if (isIOS11) {
+					That.webcam.pause();
+					That.webcam.srcObject.getTracks().forEach(function(track) {
+						track.stop();
+					});
+				}
 
 				That.faceImage.width = That.webcam.videoWidth;
 				That.faceImage.height = That.webcam.videoHeight;
