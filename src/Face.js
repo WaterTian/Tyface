@@ -69,35 +69,11 @@ export default class Face {
 		console.log("waitForSDK");
 
 		if (That.brfv4.sdkReady) {
-			That.initSDK();
+			That.startCamera();
 		} else {
 			setTimeout(That.waitForSDK, 1000);
 		}
 	}
-
-	initSDK() {
-		console.log("initSDK");
-
-		That.resolution = new That.brfv4.Rectangle(0, 0, 640, 480);
-		That.brfManager = new That.brfv4.BRFManager();
-		That.brfManager.init(That.resolution, That.resolution, "com.tastenkunst.brfv4.js.examples.minimal.webcam");
-
-
-		// if (isIOS11) {
-		// 	// Start the camera stream again on iOS.
-		// 	setTimeout(function() {
-		// 		console.log('delayed camera restart for iOS 11');
-		// 		That.startCamera()
-		// 	}, 2000)
-		// } else {
-		// 	That.onComplete();
-		// }
-
-		That.startCamera();
-
-	}
-
-
 
 	startCamera() {
 
@@ -113,19 +89,11 @@ export default class Face {
 					setTimeout(onStreamDimensionsAvailable, 100);
 				} else {
 
-					// if (isIOS11) {
-					// 	console.log('webcam pause for iOS 11');
-					// 	That.webcam.pause();
-					// 	That.webcam.srcObject.getTracks().forEach(function(track) {
-					// 		track.stop();
-					// 	});
-					// }
-
 					That.faceImage.width = That.webcam.videoWidth;
 					That.faceImage.height = That.webcam.videoHeight;
 					That.faceImageCtx = That.faceImage.getContext("2d");
 
-					That.onComplete();
+					That.initSDK();
 				}
 			}
 
@@ -145,6 +113,19 @@ export default class Face {
 			alert("Camera Erro. " + err);
 		});
 	}
+
+
+	initSDK() {
+		console.log("initSDK");
+
+		That.resolution = new That.brfv4.Rectangle(0, 0, That.faceImage.width, That.faceImage.height);
+		That.brfManager = new That.brfv4.BRFManager();
+		That.brfManager.init(That.resolution, That.resolution, "com.tastenkunst.brfv4.js.examples.minimal.webcam");
+
+
+		That.onComplete();
+	}
+
 
 
 	getFaces() {

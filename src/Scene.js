@@ -35,12 +35,15 @@ export default class Scene {
 
 	start() {
 
-		APP = new PIXI.Application(640, 480);
+		APP = new PIXI.Application();
 		document.body.appendChild(APP.view);
 
 
 		faceTexture = PIXI.Texture.fromCanvas(That.face.faceImage);
 		// faceTexture = PIXI.Texture.fromVideo(That.face.webcam);
+
+		var _w = That.face.faceImage.width;
+		var _h = That.face.faceImage.height;
 
 		var faceNum = 5;
 
@@ -49,11 +52,11 @@ export default class Scene {
 			var c = 1 - (0.15 * i);
 
 			var facePlane = new PIXI.Sprite(faceTexture);
-			facePlane.width = APP.screen.width;
-			facePlane.height = APP.screen.height;
+			facePlane.width = _w;
+			facePlane.height = _h;
 			facePlane.anchor.set(0.5);
-			facePlane.x = APP.screen.width / 2;
-			facePlane.y = APP.screen.height / 2;
+			facePlane.x = _w / 2;
+			facePlane.y = _h / 2;
 			facePlane.scale.set(c, c);
 			facePlaneArr.push(facePlane);
 			APP.stage.addChild(facePlane);
@@ -61,8 +64,8 @@ export default class Scene {
 			if (i < faceNum - 1) {
 				var faceMask = new PIXI.Graphics();
 				faceMask.scale.set(c, c);
-				faceMask.x = APP.screen.width * (1 - c) / 2;
-				faceMask.y = APP.screen.height * (1 - c) / 2;
+				faceMask.x = _w * (1 - c) / 2;
+				faceMask.y = _h * (1 - c) / 2;
 				faceMaskArr.push(faceMask);
 				APP.stage.addChild(faceMask);
 			}
