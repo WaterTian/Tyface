@@ -24,30 +24,6 @@ export default class Face {
 
 
 
-		var loader = new Loader();
-		loader.preload([
-			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.js", // BRFv4 SDK
-			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.wasm",
-
-		], this.loaded);
-
-	}
-
-	loaded() {
-		That.brfv4 = {
-			locateFile: function(fileName) {
-				return brfv4BaseURL + fileName;
-			}
-		};
-		initializeBRF(That.brfv4);
-
-		That.initCamera();
-	}
-
-
-
-	initCamera() {
-
 		var support = (typeof WebAssembly === 'object');
 		if (support) {
 			function testSafariWebAssemblyBug() {
@@ -60,12 +36,67 @@ export default class Face {
 				support = false;
 			}
 		}
+		if (!support) { brfv4BaseURL = "js/libs/brf_asmjs/"; }
+
+
+
+		var loader = new Loader();
+		loader.preload([
+			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.js", // BRFv4 SDK
+		], this.loaded);
+
+	}
+
+	loaded() {
+		That.brfv4 = {
+			locateFile: function(fileName) {
+				return brfv4BaseURL + fileName;
+			}
+		};
+		initializeBRF(That.brfv4);
 
 
 		//add
 		document.body.appendChild(That.webcam);
 		document.body.appendChild(That.faceImage);
 
+		That.startCamera();
+	}
+
+
+
+	startCamera() {
+
+		function onStreamFetched(mediaStream) {
+			console.log("onStreamFetched");
+
+			That.webcam.srcObject = mediaStream;
+			That.webcam.play();
+
+			function onStreamDimensionsAvailable() {
+				console.log("onStreamDimensionsAvailable");
+				if (That.webcam.videoWidth === 0) {
+					setTimeout(onStreamDimensionsAvailable, 100);
+				} else {
+
+					if (isIOS11) {
+						console.log('webcam pause for iOS 11');
+						That.webcam.pause();
+						That.webcam.srcObject.getTracks().forEach(function(track) {
+							track.stop();
+						});
+					}
+
+					That.faceImage.width = That.webcam.videoWidth;
+					That.faceImage.height = That.webcam.videoHeight;
+					That.faceImageCtx = That.faceImage.getContext("2d");
+
+					That.waitForSDK();
+				}
+			}
+
+			onStreamDimensionsAvailable();
+		}
 
 		var mediaDev = window.navigator.mediaDevices.getUserMedia({
 			audio: false,
@@ -75,42 +106,12 @@ export default class Face {
 				frameRate: 30
 			}
 		});
-		mediaDev.then(That.onStreamFetched);
+		mediaDev.then(onStreamFetched);
 		mediaDev.catch(function(err) {
 			alert("Camera Erro. " + err);
 		});
 	}
 
-	onStreamFetched(mediaStream) {
-		console.log("onStreamFetched");
-
-		That.webcam.srcObject = mediaStream;
-		That.webcam.play();
-
-		function onStreamDimensionsAvailable() {
-			console.log("onStreamDimensionsAvailable");
-			if (That.webcam.videoWidth === 0) {
-				setTimeout(onStreamDimensionsAvailable, 100);
-			} else {
-
-				if (isIOS11) {
-					console.log('webcam pause for iOS 11');
-					That.webcam.pause();
-					That.webcam.srcObject.getTracks().forEach(function(track) {
-						track.stop();
-					});
-				}
-
-				That.faceImage.width = That.webcam.videoWidth;
-				That.faceImage.height = That.webcam.videoHeight;
-				That.faceImageCtx = That.faceImage.getContext("2d");
-
-				That.waitForSDK();
-			}
-		}
-
-		onStreamDimensionsAvailable();
-	}
 	waitForSDK() {
 		console.log("waitForSDK");
 
@@ -132,7 +133,7 @@ export default class Face {
 			// Start the camera stream again on iOS.
 			setTimeout(function() {
 				console.log('delayed camera restart for iOS 11');
-				That.initCamera()
+				That.startCamera()
 			}, 2000)
 		} else {
 			That.onComplete();
