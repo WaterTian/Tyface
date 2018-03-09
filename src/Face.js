@@ -60,7 +60,39 @@ export default class Face {
 		document.body.appendChild(That.webcam);
 		document.body.appendChild(That.faceImage);
 
+		That.waitForSDK();
+	}
+
+	waitForSDK() {
+		console.log("waitForSDK");
+
+		if (That.brfv4.sdkReady) {
+			That.initSDK();
+		} else {
+			setTimeout(That.waitForSDK, 1000);
+		}
+	}
+
+	initSDK() {
+		console.log("initSDK");
+
+		That.resolution = new That.brfv4.Rectangle(0, 0, 640, 480);
+		That.brfManager = new That.brfv4.BRFManager();
+		That.brfManager.init(That.resolution, That.resolution, "com.tastenkunst.brfv4.js.examples.minimal.webcam");
+
+
+		// if (isIOS11) {
+		// 	// Start the camera stream again on iOS.
+		// 	setTimeout(function() {
+		// 		console.log('delayed camera restart for iOS 11');
+		// 		That.startCamera()
+		// 	}, 2000)
+		// } else {
+		// 	That.onComplete();
+		// }
+
 		That.startCamera();
+
 	}
 
 
@@ -79,19 +111,19 @@ export default class Face {
 					setTimeout(onStreamDimensionsAvailable, 100);
 				} else {
 
-					if (isIOS11) {
-						console.log('webcam pause for iOS 11');
-						That.webcam.pause();
-						That.webcam.srcObject.getTracks().forEach(function(track) {
-							track.stop();
-						});
-					}
+					// if (isIOS11) {
+					// 	console.log('webcam pause for iOS 11');
+					// 	That.webcam.pause();
+					// 	That.webcam.srcObject.getTracks().forEach(function(track) {
+					// 		track.stop();
+					// 	});
+					// }
 
 					That.faceImage.width = That.webcam.videoWidth;
 					That.faceImage.height = That.webcam.videoHeight;
 					That.faceImageCtx = That.faceImage.getContext("2d");
 
-					That.waitForSDK();
+					That.onComplete();
 				}
 			}
 
@@ -112,34 +144,6 @@ export default class Face {
 		});
 	}
 
-	waitForSDK() {
-		console.log("waitForSDK");
-
-		if (That.brfv4.sdkReady) {
-			That.initSDK();
-		} else {
-			setTimeout(That.waitForSDK, 1000);
-		}
-	}
-
-	initSDK() {
-
-		That.resolution = new That.brfv4.Rectangle(0, 0, 640, 480);
-		That.brfManager = new That.brfv4.BRFManager();
-		That.brfManager.init(That.resolution, That.resolution, "com.tastenkunst.brfv4.js.examples.minimal.webcam");
-
-
-		if (isIOS11) {
-			// Start the camera stream again on iOS.
-			setTimeout(function() {
-				console.log('delayed camera restart for iOS 11');
-				That.startCamera()
-			}, 2000)
-		} else {
-			That.onComplete();
-		}
-
-	}
 
 	getFaces() {
 
