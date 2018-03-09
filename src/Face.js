@@ -12,13 +12,13 @@ export default class Face {
 		this.onComplete = onComplete;
 
 		this.webcam = document.createElement('video');
-		// this.webcam.setAttribute("style", "display:none;");
+		this.webcam.setAttribute("style", "display:none;");
 		this.webcam.setAttribute('playsinline', true);
 		this.webcam.setAttribute('webkit-playsinline', true);
 
 
 		this.faceImage = document.createElement('canvas');
-		// this.faceImage.setAttribute("style", "display:none;");
+		this.faceImage.setAttribute("style", "display:none;");
 		this.faceImageCtx;
 		this.brfv4 = null;
 		this.brfManager = null;
@@ -158,19 +158,19 @@ export default class Face {
 
 		var faces = this.brfManager.getFaces();
 
-		///points draw
-		for (var i = 0; i < faces.length; i++) {
-			var face = faces[i];
-			if (face.state === this.brfv4.BRFState.FACE_TRACKING_START ||
-				face.state === this.brfv4.BRFState.FACE_TRACKING) {
-				this.faceImageCtx.strokeStyle = "#00ffa0";
-				for (var k = 0; k < face.vertices.length; k += 2) {
-					this.faceImageCtx.beginPath();
-					this.faceImageCtx.arc(face.vertices[k], face.vertices[k + 1], 2, 0, 2 * Math.PI);
-					this.faceImageCtx.stroke();
-				}
-			}
-		}
+		// ///points draw
+		// for (var i = 0; i < faces.length; i++) {
+		// 	var face = faces[i];
+		// 	if (face.state === this.brfv4.BRFState.FACE_TRACKING_START ||
+		// 		face.state === this.brfv4.BRFState.FACE_TRACKING) {
+		// 		this.faceImageCtx.strokeStyle = "#00ffa0";
+		// 		for (var k = 0; k < face.vertices.length; k += 2) {
+		// 			this.faceImageCtx.beginPath();
+		// 			this.faceImageCtx.arc(face.vertices[k], face.vertices[k + 1], 2, 0, 2 * Math.PI);
+		// 			this.faceImageCtx.stroke();
+		// 		}
+		// 	}
+		// }
 
 
 		return faces;
