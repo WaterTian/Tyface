@@ -43,7 +43,7 @@ export default class Scene {
 
 		for (var i = 0; i < faceNum; i++) {
 
-			var c = 1 - (0.18 * i);
+			var c = 1 - (0.15 * i);
 
 			var facePlane = new PIXI.Sprite(faceTexture);
 			facePlane.width = APP.screen.width;

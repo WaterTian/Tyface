@@ -27,9 +27,21 @@ export default class Face {
 		var loader = new Loader();
 		loader.preload([
 			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.js", // BRFv4 SDK
+			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.wasm",
 
-		], this.initCamera);
+		], this.loaded);
 
+	}
+
+	loaded() {
+		That.brfv4 = {
+			locateFile: function(fileName) {
+				return brfv4BaseURL + fileName;
+			}
+		};
+		initializeBRF(That.brfv4);
+
+		That.initCamera();
 	}
 
 
@@ -49,14 +61,6 @@ export default class Face {
 			}
 		}
 
-
-
-		That.brfv4 = {
-			locateFile: function(fileName) {
-				return brfv4BaseURL + fileName;
-			}
-		};
-		initializeBRF(That.brfv4);
 
 		//add
 		document.body.appendChild(That.webcam);
@@ -113,7 +117,7 @@ export default class Face {
 		if (That.brfv4.sdkReady) {
 			That.initSDK();
 		} else {
-			setTimeout(That.waitForSDK, 100);
+			setTimeout(That.waitForSDK, 1000);
 		}
 	}
 
