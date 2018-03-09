@@ -12,11 +12,11 @@ export default class Face {
 		this.onComplete = onComplete;
 
 		this.webcam = document.createElement('video');
-		this.webcam.setAttribute("style", "display:none;");
+		// this.webcam.setAttribute("style", "display:none;");
 		this.webcam.setAttribute('webkit-playsinline', true);
 
 		this.faceImage = document.createElement('canvas');
-		this.faceImage.setAttribute("style", "display:none;");
+		// this.faceImage.setAttribute("style", "display:none;");
 		this.faceImageCtx;
 		this.brfv4 = null;
 		this.brfManager = null;
