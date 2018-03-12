@@ -10,7 +10,11 @@ var That;
 var APP;
 var faceTexture;
 var facePlaneArr = [];
-var faceMaskArr = [];
+
+var imageW, imageH;
+
+
+var maskImage, maskImageCtx, maskTexture;
 
 
 export default class Scene {
@@ -26,7 +30,7 @@ export default class Scene {
 	}
 
 	completeFace() {
-		console.log("completeFace");
+		console.log("completeFace get:");
 		console.log(That.face.getFaces());
 
 		That.start();
@@ -40,40 +44,37 @@ export default class Scene {
 
 
 		faceTexture = PIXI.Texture.fromCanvas(That.face.faceImage);
-		// faceTexture = PIXI.Texture.fromVideo(That.face.webcam);
 
-		var _w = That.face.faceImage.width;
-		var _h = That.face.faceImage.height;
+		imageW = That.face.faceImage.width;
+		imageH = That.face.faceImage.height;
+
+
+		//mask
+		maskImage = document.createElement('canvas');
+		maskImageCtx = maskImage.getContext("2d");
+		maskTexture = PIXI.Texture.fromCanvas(maskImage);
+		maskImage.width = imageW;
+		maskImage.height = imageH;
+
 
 		var faceNum = 5;
-
-		for (var i = 0; i < faceNum; i++) {
-
-			var c = 1 - (0.15 * i);
-
-			var facePlane = new PIXI.Sprite(faceTexture);
-			facePlane.width = _w;
-			facePlane.height = _h;
-			facePlane.anchor.set(0.5);
-			facePlane.x = _w / 2;
-			facePlane.y = _h / 2;
-			facePlane.scale.set(c, c);
-			facePlaneArr.push(facePlane);
-			APP.stage.addChild(facePlane);
-
-			if (i < faceNum - 1) {
-				var faceMask = new PIXI.Graphics();
+		for (var i = 1; i <= faceNum; i++) {
+			var c = 0.3 * i;
+			if (i == 1) {
+				var facePlane = new PIXI.Sprite(faceTexture);
+				facePlane.scale.set(c, c);
+				facePlane.x = imageW * (1 - c) / 2;
+				facePlane.y = imageH * (1 - c) / 2;
+				facePlaneArr.push(facePlane);
+				APP.stage.addChild(facePlane);
+			} else {
+				var faceMask = new PIXI.Sprite(maskTexture);
 				faceMask.scale.set(c, c);
-				faceMask.x = _w * (1 - c) / 2;
-				faceMask.y = _h * (1 - c) / 2;
-				faceMaskArr.push(faceMask);
+				faceMask.x = imageW * (1 - c) / 2;
+				faceMask.y = imageH * (1 - c) / 2;
+				facePlaneArr.push(faceMask);
 				APP.stage.addChild(faceMask);
 			}
-
-			if (i > 0) {
-				facePlaneArr[i].mask = faceMaskArr[i - 1];
-			}
-
 		}
 
 
@@ -88,28 +89,37 @@ export default class Scene {
 
 		faceTexture.update();
 
+
 		var faces = That.face.getFaces();
 		if (faces.length > 0) {
 			var face = faces[0];
-			for (var i = 0; i < faceMaskArr.length; i++) {
-				faceMaskArr[i].clear();
-				faceMaskArr[i].beginFill(0xffffff, 0.3);
-				faceMaskArr[i].moveTo(face.vertices[0], face.vertices[1]);
 
+
+			maskImageCtx.clearRect(0, 0, imageW, imageH);
+			maskImageCtx.fillStyle = "red";
+			maskImageCtx.beginPath()
+			if (face.state === That.face.brfv4.BRFState.FACE_TRACKING_START || face.state === That.face.brfv4.BRFState.FACE_TRACKING) {
+
+				maskImageCtx.moveTo(face.vertices[0], face.vertices[1]);
 				for (var k = 2; k < 17 * 2; k += 2) {
-					faceMaskArr[i].lineTo(face.vertices[k], face.vertices[k + 1]);
+					maskImageCtx.lineTo(face.vertices[k], face.vertices[k + 1]);
 				}
 				for (k = 26 * 2; k >= 17 * 2; k -= 2) {
-					faceMaskArr[i].lineTo(face.vertices[k], face.vertices[k + 1]);
+					maskImageCtx.lineTo(face.vertices[k], face.vertices[k + 1]);
 				}
 			}
+			maskImageCtx.fill();
+			maskImageCtx.globalCompositeOperation = "source-out";
+			maskImageCtx.drawImage(That.face.faceImage, 0, 0);
+			// maskImageCtx.fillStyle = "rgba(0,0,0,0.3)";
+			// maskImageCtx.fillRect(0, 0, imageW, imageH);
+			maskTexture.update();
 
-			// for (var j = 0; j < faceContainerArr.length; j++) {
-			// 	// faceContainerArr[j].x += (face.vertices[30 * 2]-faceContainerArr[j].x)*0.1*(j+1);
-			// 	// faceContainerArr[j].y += (face.vertices[30 * 2 + 1]-faceContainerArr[j].y)*0.1*(j+1);
-			// 	// faceContainerArr[j].x = face.vertices[30 * 2];
-			// 	// faceContainerArr[j].y = face.vertices[30 * 2 + 1];
-			// }
+			for (var i = 0; i < facePlaneArr.length; i++) {
+				var c = facePlaneArr[i].scale.x;
+				facePlaneArr[i].x = face.vertices[30 * 2]  * (1 - c);
+				facePlaneArr[i].y = face.vertices[30 * 2 + 1]  * (1 - c);
+			}
 
 		}
 
