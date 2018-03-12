@@ -58,9 +58,9 @@ export default class Scene {
 
 
 		var faceNum = 5;
-		for (var i = 1; i <= faceNum; i++) {
-			var c = 0.3 * i;
-			if (i == 1) {
+		for (var i = 0; i < faceNum; i++) {
+			var c = -1.5 * Math.cos(i / faceNum * (Math.PI / 2)) + 1.5 + 0.2;
+			if (i == 0) {
 				var facePlane = new PIXI.Sprite(faceTexture);
 				facePlane.scale.set(c, c);
 				facePlane.x = imageW * (1 - c) / 2;
@@ -78,9 +78,9 @@ export default class Scene {
 		}
 
 
-
 		That.update();
 	}
+
 
 	update() {
 		requestAnimationFrame(That.update.bind(That));
@@ -117,10 +117,10 @@ export default class Scene {
 
 			for (var i = 0; i < facePlaneArr.length; i++) {
 				var c = facePlaneArr[i].scale.x;
-				facePlaneArr[i].x = face.vertices[30 * 2]  * (1 - c);
-				facePlaneArr[i].y = face.vertices[30 * 2 + 1]  * (1 - c);
+				facePlaneArr[i].x += (face.vertices[30 * 2] * (1 - c) - facePlaneArr[i].x) * 0.15 * (i + 1);
+				facePlaneArr[i].y += (face.vertices[30 * 2 + 1] * (1 - c) - facePlaneArr[i].y) * 0.15 * (i + 1);
 			}
-
+			
 		}
 
 
