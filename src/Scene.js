@@ -20,7 +20,7 @@ var blackCtx, blackTexture;
 
 export default class Scene {
 	constructor() {
-		this.vconsole = new VConsole();
+		// this.vconsole = new VConsole();
 		// this.stats = new Stats();
 		// document.body.appendChild(this.stats.dom);
 
@@ -38,15 +38,18 @@ export default class Scene {
 
 
 	start() {
+		imageW = That.face.faceImage.width;
+		imageH = That.face.faceImage.height;
+		
 
-		APP = new PIXI.Application(window.innerWidth, window.innerHeight);
+		APP = new PIXI.Application(imageW, imageH);
 		document.body.appendChild(APP.view);
+		APP.resolution = window.devicePixelRatio;
 
 
 		faceTexture = PIXI.Texture.fromCanvas(That.face.faceImage);
 
-		imageW = That.face.faceImage.width;
-		imageH = That.face.faceImage.height;
+
 
 
 		//maskFace
