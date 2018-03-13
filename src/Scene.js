@@ -20,14 +20,13 @@ var blackCtx, blackTexture;
 
 export default class Scene {
 	constructor() {
-		// this.vconsole = new VConsole();
+		this.vconsole = new VConsole();
 		// this.stats = new Stats();
 		// document.body.appendChild(this.stats.dom);
 
 		That = this;
 
 		this.face = new Face(this.completeFace);
-
 	}
 
 	completeFace() {
