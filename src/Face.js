@@ -3,7 +3,7 @@ const isIOS11 = (window.navigator.userAgent.indexOf("iPad") > 0 || window.naviga
 const Loader = require('./Loader.js').default;
 var That;
 
-var brfv4BaseURL = "js/libs/brf_wasm/";
+var brfv4BaseURL = "dist/brf_wasm/";
 
 export default class Face {
 	constructor(onComplete) {
@@ -38,13 +38,13 @@ export default class Face {
 				support = false;
 			}
 		}
-		if (!support) { brfv4BaseURL = "js/libs/brf_asmjs/"; }
+		if (!support) { brfv4BaseURL = "dist/brf_asmjs/"; }
 
 
 
 		var loader = new Loader();
 		loader.preload([
-			brfv4BaseURL + "BRFv4_JS_TK190218_v4.0.5_trial.js", // BRFv4 SDK
+			brfv4BaseURL + "trial.js", // BRFv4 SDK
 		], this.loaded);
 
 	}

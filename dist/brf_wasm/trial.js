@@ -646,9 +646,9 @@ function initializeBRF(brfv4) {
 		}
 
 		function integrateWasmJS() {
-			var wasmTextFile = "BRFv4_JS_TK190218_v4.0.5_trial.wast";
-			var wasmBinaryFile = "BRFv4_JS_TK190218_v4.0.5_trial.wasm";
-			var asmjsCodeFile = "BRFv4_JS_TK190218_v4.0.5_trial.temp.asm.js";
+			var wasmTextFile = "trial.wast";
+			var wasmBinaryFile = "trial.wasm";
+			var asmjsCodeFile = "trial.temp.asm.js";
 			if (typeof Module["locateFile"] === "function") {
 				if (!isDataURI(wasmTextFile)) {
 					wasmTextFile = Module["locateFile"](wasmTextFile)

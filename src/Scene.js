@@ -20,9 +20,9 @@ var blackCtx, blackTexture;
 
 export default class Scene {
 	constructor() {
-		this.vconsole = new VConsole();
-		this.stats = new Stats();
-		document.body.appendChild(this.stats.dom);
+		// this.vconsole = new VConsole();
+		// this.stats = new Stats();
+		// document.body.appendChild(this.stats.dom);
 
 		That = this;
 
@@ -32,7 +32,7 @@ export default class Scene {
 
 	completeFace() {
 		console.log("completeFace get:");
-		console.log(That.face.getFaces());
+		// console.log(That.face.getFaces());
 
 		That.start();
 	}
@@ -40,7 +40,7 @@ export default class Scene {
 
 	start() {
 
-		APP = new PIXI.Application();
+		APP = new PIXI.Application(window.innerWidth, window.innerHeight);
 		document.body.appendChild(APP.view);
 
 
@@ -79,7 +79,7 @@ export default class Scene {
 			} else {
 
 				var faceBlack = new PIXI.Sprite(blackTexture);
-				faceBlack.scale.set(c, c*1.2);
+				faceBlack.scale.set(c, c * 1.1);
 				faceBlack.x = imageW * (1 - c) / 2;
 				faceBlack.y = imageH * (1 - c) / 2;
 				facePlaneArr.push(faceBlack);
@@ -95,6 +95,9 @@ export default class Scene {
 			}
 		}
 
+
+		That.onResize();
+		window.addEventListener("resize", That.onResize);
 
 		That.update();
 	}
@@ -116,20 +119,34 @@ export default class Scene {
 			var centerY = face.vertices[30 * 2 + 1];
 			var _h = face.vertices[8 * 2 + 1] - centerY;
 
-            //////////
+			//////////
 			maskImageCtx.clearRect(0, 0, imageW, imageH);
 			maskImageCtx.fillStyle = "red";
-			maskImageCtx.beginPath()
+			maskImageCtx.beginPath();
 			if (face.state === That.face.brfv4.BRFState.FACE_TRACKING_START || face.state === That.face.brfv4.BRFState.FACE_TRACKING) {
-
-				maskImageCtx.moveTo(face.vertices[0], face.vertices[1]);
-				for (var k = 2; k < 17 * 2; k += 2) {
-					maskImageCtx.lineTo(face.vertices[k], face.vertices[k + 1]);
-					// maskImageCtx.quadraticCurveTo(face.vertices[k], face.vertices[k + 1], face.vertices[k + 2], face.vertices[k + 3]);
+				var pArr = [];
+				var _p;
+				for (var k = 0 * 2; k < 17 * 2; k += 2) {
+					_p = [face.vertices[k], face.vertices[k + 1]];
+					pArr.push(_p);
 				}
 				for (k = 26 * 2; k >= 17 * 2; k -= 2) {
-					maskImageCtx.lineTo(face.vertices[k], face.vertices[k + 1]);
+					_p = [face.vertices[k], face.vertices[k + 1]];
+					pArr.push(_p);
 				}
+
+
+				for (var l = 0; l < pArr.length; l++) {
+					if (l < 1) {
+						maskImageCtx.moveTo(pArr[l][0], pArr[l][1]);
+					} else {
+						// var _px=pArr[l][0] + (pArr[l][0] - pArr[l-1][0]);
+						// var _py=pArr[l][1] + (pArr[l][1] - pArr[l-1][1]);
+						// maskImageCtx.quadraticCurveTo(_px, _py, pArr[l][0], pArr[l][1]);
+						maskImageCtx.lineTo(pArr[l][0], pArr[l][1]);
+					}
+				}
+
 			}
 			maskImageCtx.fill();
 			maskImageCtx.closePath();
@@ -139,7 +156,7 @@ export default class Scene {
 
 
 			/////////
-			var grd = blackCtx.createRadialGradient(centerX, centerY, _h*0.6, centerX, centerY, _h*1.2);
+			var grd = blackCtx.createRadialGradient(centerX, centerY, _h * 0.6, centerX, centerY, _h * 1.2);
 			grd.addColorStop(0, "rgba(0,0,0,0)");
 			grd.addColorStop(1, "rgba(0,0,0,1)");
 			blackCtx.fillStyle = grd;
@@ -156,9 +173,24 @@ export default class Scene {
 			}
 
 		}
-
-
 	}
 
+	onResize() {
+		var ww = window.innerWidth;
+		var wh = window.innerHeight;
 
+		var s = wh / imageH;
+
+		if (imageW * s < ww) {
+			s = ww / imageW;
+		}
+
+		var iw = imageW * s;
+		var ih = imageH * s;
+		var ix = (ww - iw) * 0.5;
+		var iy = (wh - ih) * 0.5;
+
+		APP.view.style.transformOrigin = "0% 0%";
+		APP.view.style.transform = "matrix(" + s + ", 0, 0, " + s + ", " + ix + ", " + iy + ")";
+	}
 }
