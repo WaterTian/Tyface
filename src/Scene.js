@@ -22,15 +22,19 @@ export default class Scene {
 	constructor() {
 		var ua = navigator.userAgent.toLowerCase();
 		var isWeChat = ua.match(/MicroMessenger/i) == "micromessenger";
-		if (isWeChat) document.getElementById('wechatTxt').style.display = "block";
+		var isIOS = ua.indexOf("iphone") > 0;
+		if (isWeChat && isIOS) document.getElementById('wechatTxt').style.display = "block";
+
+
 
 		// this.vconsole = new VConsole();
 		// this.stats = new Stats();
 		// document.body.appendChild(this.stats.dom);
 
 
+
 		That = this;
-		this.face = new Face(this.completeFace);		
+		this.face = new Face(this.completeFace);
 	}
 
 	completeFace() {
