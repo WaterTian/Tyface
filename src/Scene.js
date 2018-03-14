@@ -3,8 +3,8 @@ const TweenMax = require('gsap');
 const Stats = require('stats.js');
 const VConsole = require('vconsole');
 
-
 const Face = require('./Face.js').default;
+
 
 var That;
 var APP;
@@ -20,18 +20,30 @@ var blackCtx, blackTexture;
 
 export default class Scene {
 	constructor() {
-		this.vconsole = new VConsole();
+		var ua = navigator.userAgent.toLowerCase();
+		var isWeChat = ua.match(/MicroMessenger/i) == "micromessenger";
+		if (isWeChat) document.getElementById('wechatTxt').style.display = "block";
+
+		// this.vconsole = new VConsole();
 		// this.stats = new Stats();
 		// document.body.appendChild(this.stats.dom);
 
-		That = this;
 
-		this.face = new Face(this.completeFace);
+		That = this;
+		this.face = new Face(this.completeFace);		
 	}
 
 	completeFace() {
 		console.log("completeFace get:");
 		// console.log(That.face.getFaces());
+
+		var loadingDiv = document.getElementById('loading');
+		var startDiv = document.getElementById('svgCanvas');
+		startDiv.setAttribute('class', 'loadingOut');
+		setTimeout(function() {
+			loadingDiv.style.display = "none";
+			clearInterval(window.siv);
+		}, 1000);
 
 		That.start();
 	}
@@ -40,7 +52,7 @@ export default class Scene {
 	start() {
 		imageW = That.face.faceImage.width;
 		imageH = That.face.faceImage.height;
-		
+
 
 		APP = new PIXI.Application(imageW, imageH);
 		document.body.appendChild(APP.view);
@@ -48,7 +60,6 @@ export default class Scene {
 
 
 		faceTexture = PIXI.Texture.fromCanvas(That.face.faceImage);
-
 
 
 
