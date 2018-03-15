@@ -27,7 +27,7 @@ export default class Scene {
 
 
 
-		// this.vconsole = new VConsole();
+		this.vconsole = new VConsole();
 		// this.stats = new Stats();
 		// document.body.appendChild(this.stats.dom);
 

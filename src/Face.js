@@ -1,9 +1,5 @@
-const isIOS11 = (window.navigator.userAgent.indexOf("iPad") > 0 || window.navigator.userAgent.indexOf("iPhone") > 0) && window.navigator.userAgent.indexOf("OS 11_") > 0;
 
-const Loader = require('./Loader.js').default;
 var That;
-
-var brfv4BaseURL = "dist/brf_wasm/";
 
 export default class Face {
 	constructor(onComplete) {
@@ -20,42 +16,9 @@ export default class Face {
 		this.faceImage = document.createElement('canvas');
 		this.faceImage.setAttribute("style", "display:none;");
 		this.faceImageCtx;
-		this.brfv4 = null;
+		this.brfv4 = window.brfv4;
 		this.brfManager = null;
 		this.resolution = null;
-
-
-
-		var support = (typeof WebAssembly === 'object');
-		if (support) {
-			function testSafariWebAssemblyBug() {
-				var bin = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 6, 1, 96, 1, 127, 1, 127, 3, 2, 1, 0, 5, 3, 1, 0, 1, 7, 8, 1, 4, 116, 101, 115, 116, 0, 0, 10, 16, 1, 14, 0, 32, 0, 65, 1, 54, 2, 0, 32, 0, 40, 2, 0, 11]);
-				var mod = new WebAssembly.Module(bin);
-				var inst = new WebAssembly.Instance(mod, {});
-				return (inst.exports.test(4) !== 0);
-			}
-			if (!testSafariWebAssemblyBug()) {
-				support = false;
-			}
-		}
-		if (!support) { brfv4BaseURL = "dist/brf_asmjs/"; }
-
-
-
-		var loader = new Loader();
-		loader.preload([
-			brfv4BaseURL + "trial.js", // BRFv4 SDK
-		], this.loaded);
-
-	}
-
-	loaded() {
-		That.brfv4 = {
-			locateFile: function(fileName) {
-				return brfv4BaseURL + fileName;
-			}
-		};
-		initializeBRF(That.brfv4);
 
 
 		//add
@@ -71,7 +34,7 @@ export default class Face {
 		if (That.brfv4.sdkReady) {
 			That.startCamera();
 		} else {
-			setTimeout(That.waitForSDK, 1000);
+			setTimeout(That.waitForSDK, 100);
 		}
 	}
 

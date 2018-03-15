@@ -501,7 +501,7 @@ function LoaderUICircle() {
         for (let i = 0; i < _vertices.length; i++) {
 
             var v = _vertices[i];
-            let random = Noise.perlin2(px, py) *3;
+            let random = Noise.perlin2(px, py) * 3;
             let x = radius * Math.cos(angle) + random + _canvasSize / 2;
             let y = radius * Math.sin(angle) + random + _canvasSize / 2;
             v.x = x;
@@ -553,3 +553,50 @@ function LoaderUICircle() {
 };
 
 new LoaderUICircle();
+
+
+////////// loader js
+
+
+var brfv4BaseURL = "dist/brf_wasm/";
+var support = (typeof WebAssembly === 'object');
+if (support) {
+    function testSafariWebAssemblyBug() {
+        var bin = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 6, 1, 96, 1, 127, 1, 127, 3, 2, 1, 0, 5, 3, 1, 0, 1, 7, 8, 1, 4, 116, 101, 115, 116, 0, 0, 10, 16, 1, 14, 0, 32, 0, 65, 1, 54, 2, 0, 32, 0, 40, 2, 0, 11]);
+        var mod = new WebAssembly.Module(bin);
+        var inst = new WebAssembly.Instance(mod, {});
+        return (inst.exports.test(4) !== 0);
+    }
+    if (!testSafariWebAssemblyBug()) {
+        support = false;
+    }
+}
+if (!support) {
+    brfv4BaseURL = "dist/brf_asmjs/";
+}
+
+function setProgressBar(percent, visible) {
+    if (percent < 0.0) percent = 0.0;
+    if (percent > 1.0) percent = 1.0;
+    console.log("loading" + percent);
+}
+
+function onPreloadProgress(event) {
+    setProgressBar(event.loaded, true);
+}
+
+function onPreloadComplete(event) {
+    setProgressBar(1.0, false);
+    console.log("complete");
+}
+
+var queue = new createjs.LoadQueue(true);
+queue.on("progress", onPreloadProgress);
+queue.on("complete", onPreloadComplete);
+queue.loadManifest([
+    brfv4BaseURL + "trial.js", // BRFv4 SDK
+    "dist/brf.js",
+    "dist/app.js",
+], true);
+
+
