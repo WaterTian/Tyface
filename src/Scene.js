@@ -31,8 +31,6 @@ export default class Scene {
 		// this.stats = new Stats();
 		// document.body.appendChild(this.stats.dom);
 
-
-
 		That = this;
 		this.face = new Face(this.completeFace);
 	}

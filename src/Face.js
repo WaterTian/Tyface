@@ -16,9 +16,16 @@ export default class Face {
 		this.faceImage = document.createElement('canvas');
 		this.faceImage.setAttribute("style", "display:none;");
 		this.faceImageCtx;
-		this.brfv4 = window.brfv4;
+		this.brfv4 = null;
 		this.brfManager = null;
 		this.resolution = null;
+
+		That.brfv4 = {
+			locateFile: function(fileName) {
+				return brfv4BaseURL + fileName;
+			}
+		};
+		initializeBRF(That.brfv4);
 
 
 		//add
@@ -34,7 +41,7 @@ export default class Face {
 		if (That.brfv4.sdkReady) {
 			That.startCamera();
 		} else {
-			setTimeout(That.waitForSDK, 100);
+			setTimeout(That.waitForSDK, 1000);
 		}
 	}
 

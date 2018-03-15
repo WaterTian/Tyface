@@ -555,7 +555,7 @@ function LoaderUICircle() {
 new LoaderUICircle();
 
 
-////////// loader js
+//////////________ loader js
 
 
 var brfv4BaseURL = "dist/brf_wasm/";
@@ -595,7 +595,5 @@ queue.on("progress", onPreloadProgress);
 queue.on("complete", onPreloadComplete);
 queue.loadManifest([
     brfv4BaseURL + "trial.js", // BRFv4 SDK
-    "dist/brf.js",
-    brfv4BaseURL + "trial.wasm",
     "dist/app.js",
 ], true);
