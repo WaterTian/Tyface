@@ -596,7 +596,6 @@ queue.on("complete", onPreloadComplete);
 queue.loadManifest([
     brfv4BaseURL + "trial.js", // BRFv4 SDK
     "dist/brf.js",
+    brfv4BaseURL + "trial.wasm",
     "dist/app.js",
 ], true);
-
-
