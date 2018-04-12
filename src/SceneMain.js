@@ -3,8 +3,12 @@ const TweenMax = require('gsap');
 const Stats = require('stats.js');
 const VConsole = require('vconsole');
 
+const webCamera = require('./webCamera.js').default;
 const Face = require('./Face.js').default;
 
+
+var loadingDiv = document.getElementById('loading');
+var startDiv = document.getElementById('svgCanvas');
 
 var That;
 var APP;
@@ -18,7 +22,7 @@ var maskImageCtx, maskTexture;
 var blackCtx, blackTexture;
 
 
-export default class Scene {
+export default class SceneMain {
 	constructor() {
 		var ua = navigator.userAgent.toLowerCase();
 		var isWeChat = ua.match(/MicroMessenger/i) == "micromessenger";
@@ -32,15 +36,21 @@ export default class Scene {
 		// document.body.appendChild(this.stats.dom);
 
 		That = this;
-		this.face = new Face(this.completeFace);
+		this.face;
+		this.webCam = new webCamera(this.completeWebCamera);
 	}
+
+	completeWebCamera() {
+		console.log("completeWebCamera");
+
+		That.face = new Face(That.webCam.dom, That.completeFace);
+	}
+
 
 	completeFace() {
 		console.log("completeFace get:");
 		// console.log(That.face.getFaces());
 
-		var loadingDiv = document.getElementById('loading');
-		var startDiv = document.getElementById('svgCanvas');
 		startDiv.setAttribute('class', 'loadingOut');
 		setTimeout(function() {
 			loadingDiv.style.display = "none";

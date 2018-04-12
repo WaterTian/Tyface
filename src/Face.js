@@ -1,24 +1,24 @@
-
 var That;
 
 export default class Face {
-	constructor(onComplete) {
+	constructor(cam, onComplete) {
 		That = this;
-
+		this.webcam = cam;
 		this.onComplete = onComplete;
-
-		this.webcam = document.createElement('video');
-		this.webcam.setAttribute("style", "display:none;");
-		this.webcam.setAttribute('playsinline', true);
-		this.webcam.setAttribute('webkit-playsinline', true);
 
 
 		this.faceImage = document.createElement('canvas');
 		this.faceImage.setAttribute("style", "display:none;");
+		document.body.appendChild(this.faceImage);
+
 		this.faceImageCtx;
 		this.brfv4 = null;
 		this.brfManager = null;
 		this.resolution = null;
+
+		this.faceImage.width = this.webcam.videoWidth;
+		this.faceImage.height = this.webcam.videoHeight;
+		this.faceImageCtx = this.faceImage.getContext("2d");
 
 		That.brfv4 = {
 			locateFile: function(fileName) {
@@ -28,10 +28,6 @@ export default class Face {
 		initializeBRF(That.brfv4);
 
 
-		//add
-		document.body.appendChild(That.webcam);
-		document.body.appendChild(That.faceImage);
-
 		That.waitForSDK();
 	}
 
@@ -39,51 +35,11 @@ export default class Face {
 		console.log("waitForSDK");
 
 		if (That.brfv4.sdkReady) {
-			That.startCamera();
+			That.initSDK();
 		} else {
 			setTimeout(That.waitForSDK, 1000);
 		}
 	}
-
-	startCamera() {
-
-		function onStreamFetched(mediaStream) {
-			console.log("onStreamFetched");
-
-			That.webcam.srcObject = mediaStream;
-			That.webcam.play();
-
-			function onStreamDimensionsAvailable() {
-				console.log("onStreamDimensionsAvailable");
-				if (That.webcam.videoWidth === 0) {
-					setTimeout(onStreamDimensionsAvailable, 100);
-				} else {
-
-					That.faceImage.width = That.webcam.videoWidth;
-					That.faceImage.height = That.webcam.videoHeight;
-					That.faceImageCtx = That.faceImage.getContext("2d");
-
-					That.initSDK();
-				}
-			}
-
-			onStreamDimensionsAvailable();
-		}
-
-		var mediaDev = window.navigator.mediaDevices.getUserMedia({
-			audio: false,
-			video: {
-				width: 640,
-				height: 480,
-				frameRate: 30
-			}
-		});
-		mediaDev.then(onStreamFetched);
-		mediaDev.catch(function(err) {
-			alert("Camera Erro. " + err);
-		});
-	}
-
 
 	initSDK() {
 		console.log("initSDK");
@@ -112,7 +68,7 @@ export default class Face {
 		// for (var i = 0; i < faces.length; i++) {
 		// 	var face = faces[i];
 		// 	if (face.state === this.brfv4.BRFState.FACE_TRACKING_START || face.state === this.brfv4.BRFState.FACE_TRACKING) {
-  //               ///points
+		//               ///points
 		// 		this.faceImageCtx.strokeStyle = "#00ffa0";
 		// 		for (var k = 0; k < face.vertices.length; k += 2) {
 		// 			this.faceImageCtx.beginPath();

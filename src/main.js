@@ -1,9 +1,9 @@
 "use strict";
 
-import Scene from './Scene';
+import SceneMain from './SceneMain';
 
 (function() {
 
-	new Scene();
+	new SceneMain();
 
 })();
